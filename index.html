@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutor App - Demo</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4">TutorApp Srbija - Privatni časovi</h1>
+
+    <label for="filter" class="block mb-2 font-semibold">Filtriraj po predmetu:</label>
+    <select id="filter" class="mb-4 p-2 border rounded">
+      <option value="all">Svi predmeti</option>
+      <option value="Matematika">Matematika</option>
+      <option value="Fizika">Fizika</option>
+      <option value="Hemija">Hemija</option>
+    </select>
+
+    <div id="teachers" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="bg-white p-4 rounded shadow" data-subject="Matematika">
+        <h2 class="font-bold">Marko Marković</h2>
+        <p>Predmet: Matematika</p>
+        <p>Ocena: 5/5</p>
+        <button class="bg-blue-500 text-white px-3 py-1 mt-2 rounded reserve-btn">Rezerviši</button>
+        <button class="bg-gray-500 text-white px-3 py-1 mt-2 rounded detail-btn">Detalji</button>
+        <div class="detail-modal hidden bg-gray-200 p-2 mt-2 rounded">
+          <p>Iskustvo: 5 godina</p>
+          <p>Nivo učenika: Srednja škola</p>
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded shadow" data-subject="Fizika">
+        <h2 class="font-bold">Jovana Jovanović</h2>
+        <p>Predmet: Fizika</p>
+        <p>Ocena: 4.8/5</p>
+        <button class="bg-blue-500 text-white px-3 py-1 mt-2 rounded reserve-btn">Rezerviši</button>
+        <button class="bg-gray-500 text-white px-3 py-1 mt-2 rounded detail-btn">Detalji</button>
+        <div class="detail-modal hidden bg-gray-200 p-2 mt-2 rounded">
+          <p>Iskustvo: 3 godine</p>
+          <p>Nivo učenika: Srednja škola</p>
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded shadow" data-subject="Hemija">
+        <h2 class="font-bold">Petar Petrović</h2>
+        <p>Predmet: Hemija</p>
+        <p>Ocena: 4.9/5</p>
+        <button class="bg-blue-500 text-white px-3 py-1 mt-2 rounded reserve-btn">Rezerviši</button>
+        <button class="bg-gray-500 text-white px-3 py-1 mt-2 rounded detail-btn">Detalji</button>
+        <div class="detail-modal hidden bg-gray-200 p-2 mt-2 rounded">
+          <p>Iskustvo: 4 godine</p>
+          <p>Nivo učenika: Srednja škola</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Filter po predmetu
+document.getElementById('filter').addEventListener('change', function() {
+  const value = this.value;
+  document.querySelectorAll('#teachers > div').forEach(card => {
+    card.style.display = (value === 'all' || card.dataset.subject === value) ? 'block' : 'none';
+  });
+});
+
+// Dugme rezervacije
+document.querySelectorAll('.reserve-btn').forEach(button => {
+  button.addEventListener('click', async () => {
+    const card = button.parentElement;
+    const teacherName = card.querySelector('h2').innerText;
+    const teacherSubject = card.dataset.subject;
+
+    const booking = {
+      teacher: teacherName,
+      subject: teacherSubject,
+      student: 'Nevena Siljic',
+      date: new Date().toLocaleString()
+    };
+
+    const response = await fetch('http://localhost:5000/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(booking)
+    });
+
+    const data = await response.json();
+    alert(data.message);
+    console.log(data);
+  });
+});
+
+// Dugme detalja
+document.querySelectorAll('.detail-btn').forEach(button => {
+  button.addEventListener('click', () => {
+    const modal = button.parentElement.querySelector('.detail-modal');
+    modal.classList.toggle('hidden');
+  });
+});
+</script>
+
+</body>
+</html>
